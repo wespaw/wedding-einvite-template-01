@@ -1232,6 +1232,47 @@
       font-size: 0.95rem;
     }
 
+    .music-toggle {
+      position: fixed;
+      right: 1rem;
+      bottom: 1rem;
+      z-index: 1;
+      display: grid;
+      place-items: center;
+      width: 3.4rem;
+      height: 3.4rem;
+      padding: 0;
+      border: 1px solid rgba(209, 171, 112, 0.28);
+      border-radius: 999px;
+      background:
+        linear-gradient(180deg, rgba(255, 251, 245, 0.92), rgba(246, 234, 220, 0.94)),
+        rgba(255, 255, 255, 0.82);
+      color: #66172b;
+      box-shadow: 0 18px 32px rgba(29, 4, 11, 0.22);
+      backdrop-filter: blur(10px);
+      cursor: pointer;
+      opacity: 1;
+      transition: opacity 0.35s ease, transform 0.35s ease;
+      transform: translateY(0);
+    }
+
+    body.before-unveil .music-toggle {
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(0.75rem);
+    }
+
+    .music-toggle svg {
+      width: 1.15rem;
+      height: 1.15rem;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      pointer-events: none;
+    }
+
     @keyframes sway {
       0%, 100% { transform: rotate(0deg); }
       50% { transform: rotate(3deg); }
@@ -1819,6 +1860,18 @@
     </section>
   </main>
 
+  <audio id="backgroundMusic" loop preload="auto">
+    <source src="assets/yung-kai-blue.mp3" type="audio/mpeg" />
+  </audio>
+
+  <button class="music-toggle" id="musicToggle" type="button" aria-pressed="false" aria-label="Mute background music">
+    <svg id="musicIcon" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M11 5 7.8 8H5a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.8L11 19V5Z" />
+      <path d="M15 9.5a4.5 4.5 0 0 1 0 5" />
+      <path d="M17.8 7a8 8 0 0 1 0 10" />
+    </svg>
+  </button>
+
   <script>
     if ("scrollRestoration" in history) {
       history.scrollRestoration = "manual";
@@ -1834,6 +1887,9 @@
     const countdownHours = document.getElementById("countdownHours");
     const countdownMinutes = document.getElementById("countdownMinutes");
     const countdownSeconds = document.getElementById("countdownSeconds");
+    const backgroundMusic = document.getElementById("backgroundMusic");
+    const musicToggle = document.getElementById("musicToggle");
+    const musicIcon = document.getElementById("musicIcon");
     const revealSections = document.querySelectorAll(".reveal-on-scroll");
     const weddingDate = new Date("2026-08-15T16:30:00+08:00");
 
@@ -1856,13 +1912,58 @@
 
     window.addEventListener("load", () => {
       window.scrollTo(0, 0);
+      backgroundMusic.muted = true;
+      startMusic();
     });
+
+    function updateMusicUI() {
+      const isMuted = backgroundMusic.muted || backgroundMusic.paused;
+      musicToggle.setAttribute("aria-pressed", String(!isMuted));
+      musicToggle.setAttribute("aria-label", isMuted ? "Unmute background music" : "Mute background music");
+      musicIcon.innerHTML = isMuted
+        ? `
+          <path d="M11 5 7.8 8H5a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.8L11 19V5Z" />
+          <path d="m15 10 5 5" />
+          <path d="m20 10-5 5" />
+        `
+        : `
+          <path d="M11 5 7.8 8H5a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.8L11 19V5Z" />
+          <path d="M15 9.5a4.5 4.5 0 0 1 0 5" />
+          <path d="M17.8 7a8 8 0 0 1 0 10" />
+        `;
+    }
+
+    async function startMusic(unmute = false) {
+      if (unmute) {
+        backgroundMusic.muted = false;
+      }
+
+      try {
+        await backgroundMusic.play();
+      } catch (error) {
+        backgroundMusic.muted = true;
+      }
+
+      updateMusicUI();
+    }
+
+    async function toggleMusic() {
+      if (backgroundMusic.paused) {
+        backgroundMusic.muted = false;
+        await startMusic(true);
+        return;
+      }
+
+      backgroundMusic.muted = !backgroundMusic.muted;
+      updateMusicUI();
+    }
 
     function openCurtain() {
       heroScreen.classList.add("is-open");
       pullTrigger.setAttribute("aria-hidden", "true");
       document.body.classList.remove("before-unveil");
       window.scrollTo({ top: 0, behavior: "smooth" });
+      startMusic(true);
     }
 
     function padTime(value) {
@@ -1899,6 +2000,8 @@
       }
     });
 
+    musicToggle.addEventListener("click", toggleMusic);
+
     if ("IntersectionObserver" in window) {
       const revealObserver = new IntersectionObserver((entries, observer) => {
         entries.forEach((entry) => {
@@ -1930,6 +2033,7 @@
     });
 
     updateCountdown();
+    updateMusicUI();
     setInterval(updateCountdown, 1000);
   </script>
 </body>
