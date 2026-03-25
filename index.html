@@ -14,6 +14,9 @@
       --wine-800: #571023;
       --wine-700: #731734;
       --wine-600: #8f2040;
+      --wine-base-top: #350712;
+      --wine-base-mid: #24040d;
+      --wine-base-bottom: #140107;
       --rose-gold: #d1ab70;
       --rose-gold-soft: #f0d6b1;
       --ivory: #f8f0e4;
@@ -39,8 +42,9 @@
       font-family: "Cormorant Garamond", serif;
       color: var(--ivory);
       background:
-        radial-gradient(circle at top, rgba(255, 240, 220, 0.12), transparent 20%),
-        linear-gradient(180deg, #21040b 0%, #120106 100%);
+        radial-gradient(circle at 50% 0%, rgba(255, 232, 201, 0.14), transparent 18%),
+        radial-gradient(circle at 50% 38%, rgba(110, 22, 49, 0.16), transparent 34%),
+        linear-gradient(180deg, var(--wine-base-top) 0%, var(--wine-base-mid) 38%, var(--wine-base-bottom) 100%);
     }
 
     body.before-unveil {
@@ -72,6 +76,18 @@
       overflow: clip;
     }
 
+    .page-shell::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 50% 12%, rgba(255, 233, 206, 0.06), transparent 20%),
+        radial-gradient(circle at 50% 42%, rgba(115, 23, 52, 0.14), transparent 26%),
+        linear-gradient(180deg, rgba(60, 9, 23, 0.12) 0%, rgba(27, 3, 10, 0) 36%, rgba(18, 1, 7, 0.08) 100%);
+      z-index: 0;
+    }
+
     .hero-screen {
       position: relative;
       min-height: 100vh;
@@ -79,8 +95,8 @@
       overflow: hidden;
       background:
         radial-gradient(circle at 50% 22%, rgba(246, 231, 207, 0.14), transparent 18%),
-        radial-gradient(circle at 50% 70%, rgba(209, 171, 112, 0.08), transparent 30%),
-        linear-gradient(180deg, #300612 0%, #170208 100%);
+        radial-gradient(circle at 50% 68%, rgba(209, 171, 112, 0.06), transparent 26%),
+        linear-gradient(180deg, rgba(54, 9, 20, 0.34) 0%, rgba(28, 4, 11, 0.14) 62%, rgba(20, 1, 7, 0) 100%);
     }
 
     .hero-screen::before,
@@ -584,7 +600,22 @@
       display: grid;
       gap: 1rem;
       padding: 1.1rem 1rem 2.4rem;
-      margin-top: -1.2rem;
+      margin-top: -3.8rem;
+    }
+
+    .content::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: -8.5rem;
+      width: min(110vw, 78rem);
+      height: 13rem;
+      transform: translateX(-50%);
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse at center top, rgba(121, 28, 54, 0.26) 0%, rgba(72, 14, 31, 0.14) 32%, rgba(24, 2, 10, 0) 72%);
+      filter: blur(16px);
+      opacity: 0.82;
     }
 
     .reveal-on-scroll {
@@ -1091,11 +1122,13 @@
 
     .dress-code-card-compact .dress-code-swatches {
       margin-top: 0.8rem;
-      gap: 0.35rem;
+      gap: 0.45rem;
     }
 
     .dress-code-card-compact .dress-swatch-dot {
-      max-width: 2.8rem;
+      max-width: 3rem;
+      height: 3rem;
+      aspect-ratio: 1/1;
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 6px 12px rgba(56, 15, 28, 0.16);
     }
 
@@ -1129,20 +1162,22 @@
     }
 
     .rsvp-panel .field label {
-      font-size: 0.75rem;
+      font-size: 0.9rem;
       letter-spacing: 0.16em;
-      color: rgba(248, 237, 226, 0.7);
+      color: rgba(248, 237, 226, 0.9);
       margin-bottom: 5px;
     }
 
     .rsvp-panel .field input,
     .rsvp-panel .field select,
     .rsvp-panel .field textarea {
-      padding: 0.7rem 0.8rem;
+      padding: 0.9rem 0.95rem;
       border-radius: 0.45rem;
       border-color: rgba(209, 171, 112, 0.08);
       background: rgba(255, 249, 243, 0.96);
-      font-size: 1rem;
+      font-size: 1.05rem;
+      color: #3f1020;
+      font-weight: 600;
       box-shadow: none;
     }
 
@@ -1157,9 +1192,9 @@
 
     .rsvp-panel .form-status {
       min-height: 1rem;
-      font-size: 0.76rem;
+      font-size: 0.92rem;
       text-align: center;
-      color: rgba(248, 237, 226, 0.68);
+      color: rgba(248, 237, 226, 0.88);
     }
 
     .section-lead {
@@ -1474,7 +1509,7 @@
     .dress-code-swatches {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 0.55rem;
+      gap: 0.65rem;
       margin-top: 0.95rem;
     }
 
@@ -1483,18 +1518,18 @@
       gap: 0.45rem;
       justify-items: center;
       text-align: center;
+      padding: 0.2rem 0.1rem;
     }
 
     .dress-swatch-dot {
       width: 100%;
-      max-width: 3.1rem;
-      aspect-ratio: 1;
-      border-radius: 999px;
+      max-width: 5.8rem;
+      aspect-ratio: 1/1;
+      border-radius: 100px;
       border: 1px solid rgba(255, 247, 234, 0.7);
       box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.28),
         0 8px 18px rgba(56, 15, 28, 0.12);
-        margin-bottom: 10px;
     }
 
     .dress-swatch span {
@@ -1636,9 +1671,17 @@
       gap: 0.85rem;
     }
 
+    .rsvp-form[hidden] {
+      display: none !important;
+    }
+
     .form-row {
       display: grid;
       gap: 0.85rem;
+    }
+
+    .field[hidden] {
+      display: none !important;
     }
 
     .field {
@@ -1663,8 +1706,15 @@
       border: 1px solid rgba(131, 91, 34, 0.22);
       background: rgba(255, 255, 255, 0.7);
       color: #47111d;
+      font-weight: 600;
       outline: none;
       transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .field input::placeholder,
+    .field textarea::placeholder {
+      color: rgba(71, 17, 29, 0.55);
+      font-weight: 500;
     }
 
     .field input:focus,
@@ -1698,6 +1748,33 @@
       color: #6b3140;
     }
 
+    .thank-you-message {
+      display: grid;
+      gap: 0.9rem;
+      padding: 1.2rem 1rem;
+      border-radius: 1.2rem;
+      background: rgba(255, 249, 243, 0.1);
+      border: 1px solid rgba(255, 240, 219, 0.18);
+      text-align: center;
+      color: var(--ivory-soft);
+    }
+
+    .thank-you-message[hidden] {
+      display: none !important;
+    }
+
+    .thank-you-message h3 {
+      margin: 0;
+      font-size: 1.6rem;
+    }
+
+    .thank-you-message p {
+      margin: 0;
+      font-size: 1.08rem;
+      line-height: 1.7;
+      color: rgba(248, 237, 226, 0.82);
+    }
+
     .footer-note {
       margin: 0;
       text-align: center;
@@ -1727,6 +1804,10 @@
       opacity: 1;
       transition: opacity 0.35s ease, transform 0.35s ease;
       transform: translateY(0);
+    }
+
+    .music-toggle[hidden] {
+      display: none !important;
     }
 
     body.before-unveil .music-toggle {
@@ -1931,7 +2012,7 @@
       }
 
       .form-row {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: 1fr;
       }
     }
 
@@ -1969,14 +2050,14 @@
         <div class="reveal-card">
           <p class="eyebrow">Together With Their Families</p>
           <p class="script-line">Request the honour of your presence</p>
-          <h1 class="names">Isabella <span>&amp;</span> Adrian</h1>
+          <h1 class="names" id="heroNames">Isabella <span>&amp;</span> Adrian</h1>
           <div class="luxury-rule" aria-hidden="true">
             <svg viewBox="0 0 24 24">
               <path d="M12 6.6c1.7-2.9 6-3.1 7.9-.8 1.9 2.3 1.4 6-1.1 8.2L12 20l-6.8-6c-2.5-2.2-3-5.9-1.1-8.2 1.9-2.3 6.2-2.1 7.9.8Z" />
             </svg>
           </div>
-          <p class="date-line">Saturday, 15 August 2026 &bull; 4:30 PM</p>
-          <p class="venue-line">The Glasshouse at Seputeh &bull; Kuala Lumpur</p>
+          <p class="date-line" id="heroDateLine">Saturday, 15 August 2026 &bull; 4:30 PM</p>
+          <p class="venue-line" id="heroVenueLine">The Glasshouse at Seputeh &bull; Kuala Lumpur</p>
           <div class="countdown-shell" aria-label="Countdown to the wedding">
             <p class="countdown-label">Counting Down To Our Day</p>
             <div class="countdown-grid">
@@ -2023,16 +2104,16 @@
     </section>
 
     <section class="content">
-      <section class="story-showcase reveal-on-scroll" style="--reveal-delay: 0.05s;" aria-label="Story and gallery">
-        <div class="story-showcase-copy">
-          <p class="section-kicker">Our Story</p>
-          <h2 class="section-title">What began with one conversation became our forever.</h2>
-          <p>We met on an ordinary evening that somehow felt different from the start. A long conversation stretched well past midnight, and what should have been a simple hello quietly became the beginning of everything.</p>
-          <p>Over time, that first spark grew into a love shaped by patience, laughter, and the kind of trust that makes even ordinary days feel beautiful.</p>
-          <div class="story-quote-pill">"Every chapter felt gentle, but every chapter led us here."</div>
+      <section class="story-showcase reveal-on-scroll" id="storyShowcaseSection" style="--reveal-delay: 0.05s;" aria-label="Story and gallery">
+        <div class="story-showcase-copy" id="storySection">
+          <p class="section-kicker" id="storyKicker">Our Story</p>
+          <h2 class="section-title" id="storyTitle">What began with one conversation became our forever.</h2>
+          <p id="storyParagraphOne">We met on an ordinary evening that somehow felt different from the start. A long conversation stretched well past midnight, and what should have been a simple hello quietly became the beginning of everything.</p>
+          <p id="storyParagraphTwo">Over time, that first spark grew into a love shaped by patience, laughter, and the kind of trust that makes even ordinary days feel beautiful.</p>
+          <div class="story-quote-pill" id="storyQuote">"Every chapter felt gentle, but every chapter led us here."</div>
         </div>
 
-        <div class="gallery-carousel" aria-label="Wedding gallery carousel">
+        <div class="gallery-carousel" id="gallerySection" aria-label="Wedding gallery carousel">
           <div class="gallery-viewport">
             <div class="gallery-track" id="galleryTrack">
               <figure class="gallery-slide">
@@ -2068,7 +2149,7 @@
 
       <section class="schedule-shell reveal-on-scroll" style="--reveal-delay: 0.12s;" aria-label="Schedule and venue">
         <article class="section-card invitation-panel">
-          <div class="venue-card-compact">
+          <div class="venue-card-compact" id="venueSection">
             <div class="section-header">
               <!-- <span class="icon-badge" aria-hidden="true">
                 <svg viewBox="0 0 24 24">
@@ -2078,32 +2159,32 @@
               </span> -->
               <div>
                 <p class="section-kicker">Venue</p>
-                <h2 class="section-title">The Glasshouse at Seputeh</h2>
+                <h2 class="section-title" id="venueTitle">The Glasshouse at Seputeh</h2>
               </div>
             </div>
             <div class="map-wrap">
               <iframe
+                id="venueMapEmbed"
                 title="Map to The Glasshouse at Seputeh"
                 loading="lazy"
                 referrerpolicy="no-referrer-when-downgrade"
                 src="https://www.google.com/maps?q=The%20Glasshouse%20at%20Seputeh%2C%20Kuala%20Lumpur&z=15&output=embed">
               </iframe>
             </div>
-            <div class="venue-meta">
+            <div class="venue-meta" id="venueAddressWrap">
               <span>86, Jalan Syed Putra, Taman Seputeh, 58000 Kuala Lumpur</span>
             </div>
             <div class="map-actions">
-              <a class="map-link" href="https://maps.google.com/?q=The%20Glasshouse%20at%20Seputeh%2C%20Kuala%20Lumpur" target="_blank" rel="noreferrer">Open In Maps</a>
+              <a class="map-link" id="venueMapLink" href="https://maps.google.com/?q=The%20Glasshouse%20at%20Seputeh%2C%20Kuala%20Lumpur" target="_blank" rel="noreferrer">Open In Maps</a>
             </div>
           </div>
 
-          <div class="luxury-divider panel-divider" aria-hidden="true">
-            <svg viewBox="0 0 24 24">
-              <path d="M12 6.6c1.7-2.9 6-3.1 7.9-.8 1.9 2.3 1.4 6-1.1 8.2L12 20l-6.8-6c-2.5-2.2-3-5.9-1.1-8.2 1.9-2.3 6.2-2.1 7.9.8Z" />
-            </svg>
-          </div>
-
-          <div class="timeline-card-compact">
+          <div class="timeline-card-compact" id="timelineSection">
+            <div class="luxury-divider panel-divider" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M12 6.6c1.7-2.9 6-3.1 7.9-.8 1.9 2.3 1.4 6-1.1 8.2L12 20l-6.8-6c-2.5-2.2-3-5.9-1.1-8.2 1.9-2.3 6.2-2.1 7.9.8Z" />
+              </svg>
+            </div>
             <div class="section-header">
               <!-- <span class="icon-badge" aria-hidden="true">
                 <svg viewBox="0 0 24 24">
@@ -2120,7 +2201,7 @@
                 <h2 class="section-title">The evening unfolds with grace and glow.</h2>
               </div>
             </div>
-            <div class="timeline-list">
+            <div class="timeline-list" id="timelineList">
               <div class="timeline-item">
                 <div class="timeline-time">4:30</div>
                 <div class="timeline-copy">
@@ -2152,13 +2233,12 @@
             </div>
           </div>
 
-          <div class="luxury-divider panel-divider" aria-hidden="true">
-            <svg viewBox="0 0 24 24">
-              <path d="M12 6.6c1.7-2.9 6-3.1 7.9-.8 1.9 2.3 1.4 6-1.1 8.2L12 20l-6.8-6c-2.5-2.2-3-5.9-1.1-8.2 1.9-2.3 6.2-2.1 7.9.8Z" />
-            </svg>
-          </div>
-
-          <div class="dress-code-card-compact">
+          <div class="dress-code-card-compact" id="dressCodeSection">
+            <div class="luxury-divider panel-divider" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M12 6.6c1.7-2.9 6-3.1 7.9-.8 1.9 2.3 1.4 6-1.1 8.2L12 20l-6.8-6c-2.5-2.2-3-5.9-1.1-8.2 1.9-2.3 6.2-2.1 7.9.8Z" />
+              </svg>
+            </div>
             <div class="section-header">
               <!-- <span class="icon-badge" aria-hidden="true">
                 <svg viewBox="0 0 24 24">
@@ -2169,7 +2249,7 @@
               </span> -->
               <div>
                 <p class="section-kicker">Dress Code</p>
-                <h2 class="section-title">Formal Attire In Romantic Tones</h2>
+                <h2 class="section-title" id="dressCodeTitle">Formal Attire In Romantic Tones</h2>
               </div>
             </div>
             <div class="dress-code-swatches" id="dressCodeSwatches">
@@ -2194,7 +2274,7 @@
         </article>
       </section>
 
-      <section class="rsvp-shell reveal-on-scroll" style="--reveal-delay: 0.16s;" aria-label="RSVP section">
+      <section class="rsvp-shell reveal-on-scroll" id="rsvpSection" style="--reveal-delay: 0.16s;" aria-label="RSVP section">
         <article class="rsvp-panel">
           <div class="section-header">
             <!-- <span class="icon-badge" aria-hidden="true">
@@ -2232,10 +2312,11 @@
                     <option value="declined">Regretfully decline</option>
                   </select>
                 </div>
-                <div class="field">
-                  <label for="guests">Number Of Guests</label>
-                  <input id="guests" name="guests" type="number" min="1" max="8" value="1" />
-                </div>
+              </div>
+
+              <div class="field" id="guestCountField" hidden>
+                <label for="guests">Number Of Guests</label>
+                <input id="guests" name="guests" type="number" min="1" max="8" value="1" />
               </div>
 
               <div class="field">
@@ -2247,6 +2328,10 @@
               <button class="submit-button" type="submit">Send RSVP</button>
               <p class="form-status" id="formStatus" role="status" aria-live="polite"></p>
             </form>
+            <div class="thank-you-message" id="rsvpThankYou" hidden>
+              <h3>Thank You</h3>
+              <p>Your RSVP has been received beautifully. We’re so grateful and cannot wait to celebrate with you.</p>
+            </div>
           </div>
         </article>
       </section>
@@ -2267,6 +2352,8 @@
     </svg>
   </button>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./supabase-config.js"></script>
   <script>
     if ("scrollRestoration" in history) {
       history.scrollRestoration = "manual";
@@ -2278,11 +2365,16 @@
     const pullTrigger = document.getElementById("pullTrigger");
     const rsvpForm = document.getElementById("rsvpForm");
     const formStatus = document.getElementById("formStatus");
+    const attendanceField = document.getElementById("attendance");
+    const guestCountField = document.getElementById("guestCountField");
+    const guestsInput = document.getElementById("guests");
+    const rsvpThankYou = document.getElementById("rsvpThankYou");
     const countdownDays = document.getElementById("countdownDays");
     const countdownHours = document.getElementById("countdownHours");
     const countdownMinutes = document.getElementById("countdownMinutes");
     const countdownSeconds = document.getElementById("countdownSeconds");
     const backgroundMusic = document.getElementById("backgroundMusic");
+    const defaultBackgroundMusicUrl = backgroundMusic.querySelector("source")?.getAttribute("src") || "";
     const musicToggle = document.getElementById("musicToggle");
     const musicIcon = document.getElementById("musicIcon");
     const revealSections = document.querySelectorAll(".reveal-on-scroll");
@@ -2290,8 +2382,15 @@
     const galleryViewport = document.querySelector(".gallery-viewport");
     const galleryPrev = document.getElementById("galleryPrev");
     const galleryNext = document.getElementById("galleryNext");
-    const galleryDots = Array.from(document.querySelectorAll(".gallery-dot"));
-    const weddingDate = new Date("2026-08-15T16:30:00+08:00");
+    const galleryDotsWrap = document.querySelector(".gallery-dots");
+    let galleryDots = Array.from(document.querySelectorAll(".gallery-dot"));
+    const timelineList = document.getElementById("timelineList");
+    const supabaseConfig = window.SUPABASE_CONFIG || {};
+    const hasSupabaseConfig = supabaseConfig.url && supabaseConfig.anonKey && !String(supabaseConfig.url).includes("YOUR_");
+    const supabaseClient = hasSupabaseConfig && window.supabase
+      ? window.supabase.createClient(supabaseConfig.url, supabaseConfig.anonKey)
+      : null;
+    let weddingDate = new Date("2026-08-15T16:30:00+08:00");
     let gallerySlides = [];
     let galleryCurrentIndex = 0;
     let galleryPointerStartX = 0;
@@ -2299,8 +2398,24 @@
     let galleryPointerId = null;
     let gallerySwipeLocked = false;
 
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
+    }
+
+    function renderNames(value) {
+      const parts = String(value || "").split("&").map((part) => part.trim()).filter(Boolean);
+      if (parts.length === 2) {
+        return `${escapeHtml(parts[0])} <span>&amp;</span> ${escapeHtml(parts[1])}`;
+      }
+      return escapeHtml(value || "");
+    }
+
     function renderTimeline(items) {
-      const timelineList = document.querySelector(".timeline-list");
       if (!timelineList || !Array.isArray(items)) {
         return;
       }
@@ -2316,13 +2431,151 @@
       `).join("");
     }
 
+    function renderDressCodeSwatches(items) {
+      const swatches = document.getElementById("dressCodeSwatches");
+      if (!swatches || !Array.isArray(items)) {
+        return;
+      }
+
+      swatches.innerHTML = items.map((item) => `
+        <div class="dress-swatch">
+          <div class="dress-swatch-dot" style="background:${escapeHtml(item.color || "#d1ab70")};"></div>
+          <span>${escapeHtml(item.label || "")}</span>
+        </div>
+      `).join("");
+    }
+
+    function applySectionVisibility(visibility) {
+      const storyShowcaseSection = document.getElementById("storyShowcaseSection");
+      const storySection = document.getElementById("storySection");
+      const gallerySection = document.getElementById("gallerySection");
+      const venueSection = document.getElementById("venueSection");
+      const timelineSection = document.getElementById("timelineSection");
+      const dressCodeSection = document.getElementById("dressCodeSection");
+      const rsvpSection = document.getElementById("rsvpSection");
+      const musicToggleEl = document.getElementById("musicToggle");
+
+      if (!visibility || typeof visibility !== "object") {
+        return;
+      }
+
+      if (storySection) storySection.hidden = visibility.story === false;
+      if (gallerySection) gallerySection.hidden = visibility.gallery === false;
+      if (storyShowcaseSection) {
+        const storyHidden = visibility.story === false;
+        const galleryHidden = visibility.gallery === false;
+        storyShowcaseSection.hidden = storyHidden && galleryHidden;
+      }
+      if (venueSection) venueSection.hidden = visibility.venue === false;
+      if (timelineSection) timelineSection.hidden = visibility.timeline === false;
+      if (dressCodeSection) dressCodeSection.hidden = visibility.dress_code === false;
+      if (rsvpSection) rsvpSection.hidden = visibility.rsvp === false;
+      if (musicToggleEl) {
+        const musicHidden = visibility.music === false;
+        musicToggleEl.hidden = musicHidden;
+        if (musicHidden) {
+          backgroundMusic.pause();
+          backgroundMusic.muted = true;
+        }
+      }
+    }
+
+    function renderGallery(items) {
+      if (!galleryTrack || !Array.isArray(items) || items.length === 0) {
+        return;
+      }
+
+      galleryTrack.innerHTML = items.map((item) => `
+        <figure class="gallery-slide">
+          <img src="${escapeHtml(item.image_url || "")}" alt="${escapeHtml(item.alt || "Wedding gallery image")}" />
+        </figure>
+      `).join("");
+
+      if (galleryDotsWrap) {
+        galleryDotsWrap.innerHTML = items.map((_, index) => `
+          <span class="gallery-dot${index === 1 || (index === 0 && items.length === 1) ? " is-active" : ""}"></span>
+        `).join("");
+        galleryDots = Array.from(galleryDotsWrap.querySelectorAll(".gallery-dot"));
+      }
+
+      initializeGallery();
+    }
+
+    function applySiteSettings(settings) {
+      if (!settings) {
+        return;
+      }
+
+      const heroNames = document.getElementById("heroNames");
+      const heroDateLine = document.getElementById("heroDateLine");
+      const heroVenueLine = document.getElementById("heroVenueLine");
+      const storyKicker = document.getElementById("storyKicker");
+      const storyTitle = document.getElementById("storyTitle");
+      const storyParagraphOne = document.getElementById("storyParagraphOne");
+      const storyParagraphTwo = document.getElementById("storyParagraphTwo");
+      const storyQuote = document.getElementById("storyQuote");
+      const venueTitle = document.getElementById("venueTitle");
+      const venueAddressWrap = document.getElementById("venueAddressWrap");
+      const venueMapEmbed = document.getElementById("venueMapEmbed");
+      const venueMapLink = document.getElementById("venueMapLink");
+      const dressCodeTitle = document.getElementById("dressCodeTitle");
+      const dressCodeText = document.getElementById("dressCodeText");
+
+      if (heroNames && settings.couple_names) heroNames.innerHTML = renderNames(settings.couple_names);
+      if (heroDateLine && settings.hero_date_line) heroDateLine.textContent = settings.hero_date_line;
+      if (heroVenueLine && settings.hero_venue_line) heroVenueLine.textContent = settings.hero_venue_line;
+      if (storyKicker && settings.story_kicker) storyKicker.textContent = settings.story_kicker;
+      if (storyTitle && settings.story_title) storyTitle.textContent = settings.story_title;
+      if (storyParagraphOne && settings.story_paragraph_one) storyParagraphOne.textContent = settings.story_paragraph_one;
+      if (storyParagraphTwo && settings.story_paragraph_two) storyParagraphTwo.textContent = settings.story_paragraph_two;
+      if (storyQuote && settings.story_quote) storyQuote.textContent = settings.story_quote;
+      if (venueTitle && settings.venue_name) venueTitle.textContent = settings.venue_name;
+      if (venueAddressWrap && settings.venue_address) venueAddressWrap.innerHTML = `<span>${escapeHtml(settings.venue_address)}</span>`;
+      if (venueMapEmbed && settings.map_embed_url) venueMapEmbed.src = settings.map_embed_url;
+      if (venueMapLink && settings.map_link_url) venueMapLink.href = settings.map_link_url;
+      if (dressCodeTitle && settings.dress_code_title) dressCodeTitle.textContent = settings.dress_code_title;
+      if (dressCodeText && settings.dress_code_text) dressCodeText.textContent = settings.dress_code_text;
+      if (settings.background_music_url) setBackgroundMusic(settings.background_music_url);
+      if (settings.section_visibility) applySectionVisibility(settings.section_visibility);
+      if (settings.wedding_datetime) {
+        const parsedDate = new Date(settings.wedding_datetime);
+        if (!Number.isNaN(parsedDate.getTime())) {
+          weddingDate = parsedDate;
+        }
+      }
+      if (Array.isArray(settings.timeline)) renderTimeline(settings.timeline);
+      if (Array.isArray(settings.gallery)) renderGallery(settings.gallery);
+      if (Array.isArray(settings.dress_code_palette)) renderDressCodeSwatches(settings.dress_code_palette);
+      updateCountdown();
+    }
+
+    async function loadSiteSettings() {
+      if (!supabaseClient) {
+        return;
+      }
+
+      const { data, error } = await supabaseClient.from("site_settings").select("*").eq("id", 1).single();
+      if (error || !data) {
+        console.warn("Unable to load site settings from Supabase.", error);
+        return;
+      }
+
+      applySiteSettings(data);
+    }
+
     window.addEventListener("load", () => {
       window.scrollTo(0, 0);
       backgroundMusic.muted = true;
       startMusic();
+      initializeGallery();
+      loadSiteSettings();
     });
 
     function updateMusicUI() {
+      if (!musicToggle || musicToggle.hidden) {
+        return;
+      }
+
       const isMuted = backgroundMusic.muted || backgroundMusic.paused;
       musicToggle.setAttribute("aria-pressed", String(!isMuted));
       musicToggle.setAttribute("aria-label", isMuted ? "Unmute background music" : "Mute background music");
@@ -2339,7 +2592,28 @@
         `;
     }
 
+    function isMusicVisible() {
+      return Boolean(musicToggle) && !musicToggle.hidden;
+    }
+
+    function setBackgroundMusic(url) {
+      const nextUrl = url || defaultBackgroundMusicUrl;
+      if (!nextUrl) {
+        return;
+      }
+
+      backgroundMusic.pause();
+      backgroundMusic.setAttribute("src", nextUrl);
+      backgroundMusic.load();
+    }
+
     async function startMusic(unmute = false) {
+      if (!isMusicVisible()) {
+        backgroundMusic.pause();
+        backgroundMusic.muted = true;
+        return;
+      }
+
       if (unmute) {
         backgroundMusic.muted = false;
       }
@@ -2354,6 +2628,10 @@
     }
 
     async function toggleMusic() {
+      if (!isMusicVisible()) {
+        return;
+      }
+
       if (backgroundMusic.paused) {
         backgroundMusic.muted = false;
         await startMusic(true);
@@ -2487,6 +2765,20 @@
       countdownSeconds.textContent = padTime(seconds);
     }
 
+    function updateGuestFieldVisibility() {
+      if (!attendanceField || !guestCountField || !guestsInput) {
+        return;
+      }
+
+      const isAttending = attendanceField.value === "attending";
+      guestCountField.hidden = !isAttending;
+      guestsInput.disabled = !isAttending;
+
+      if (!isAttending) {
+        guestsInput.value = "1";
+      }
+    }
+
     pullTrigger.addEventListener("click", openCurtain);
     pullTrigger.addEventListener("keydown", (event) => {
       if (event.key === "Enter" || event.key === " ") {
@@ -2496,9 +2788,11 @@
     });
 
     musicToggle.addEventListener("click", toggleMusic);
+    if (attendanceField) {
+      attendanceField.addEventListener("change", updateGuestFieldVisibility);
+    }
 
     if (galleryPrev && galleryNext && galleryTrack) {
-      initializeGallery();
       galleryPrev.addEventListener("click", () => scrollGallery(-1));
       galleryNext.addEventListener("click", () => scrollGallery(1));
       if (galleryViewport) {
@@ -2530,17 +2824,51 @@
       revealSections.forEach((section) => section.classList.add("is-visible"));
     }
 
-    rsvpForm.addEventListener("submit", (event) => {
+    rsvpForm.addEventListener("submit", async (event) => {
       if (!rsvpForm.checkValidity()) {
         event.preventDefault();
         formStatus.textContent = "Please complete the required fields before sending your RSVP.";
         return;
       }
 
+      if (!supabaseClient) {
+        event.preventDefault();
+        formStatus.textContent = "Connect Supabase first to store RSVP submissions.";
+        return;
+      }
+
+      event.preventDefault();
       formStatus.textContent = "Submitting your RSVP...";
+
+      const formElements = rsvpForm.elements;
+      const payload = {
+        name: formElements.namedItem("name").value.trim(),
+        email: formElements.namedItem("email").value.trim(),
+        attendance: formElements.namedItem("attendance").value,
+        guests: formElements.namedItem("attendance").value === "attending"
+          ? Number(formElements.namedItem("guests").value || 1)
+          : 1,
+        message: formElements.namedItem("message").value.trim()
+      };
+
+      const { error } = await supabaseClient.from("rsvps").insert(payload);
+      if (error) {
+        formStatus.textContent = error.message;
+        return;
+      }
+
+      formStatus.textContent = "";
+      rsvpForm.hidden = true;
+      if (rsvpThankYou) {
+        rsvpThankYou.hidden = false;
+      }
+      rsvpForm.reset();
+      formElements.namedItem("guests").value = "1";
+      updateGuestFieldVisibility();
     });
 
     updateCountdown();
+    updateGuestFieldVisibility();
     updateMusicUI();
     setInterval(updateCountdown, 1000);
   </script>

@@ -1,0 +1,1592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Invitation Admin Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #192330;
+      --muted: #6b7788;
+      --line: #dbe4ef;
+      --line-strong: #c7d3e2;
+      --paper: #f3f6fb;
+      --panel: rgba(255, 255, 255, 0.9);
+      --panel-soft: rgba(247, 250, 253, 0.92);
+      --sidebar: #111a24;
+      --sidebar-soft: #1a2431;
+      --accent: #8a5a36;
+      --accent-strong: #6a4326;
+      --accent-soft: #efe0cf;
+      --success: #1e6c53;
+      --danger: #b64d42;
+      --shadow-lg: 0 28px 54px rgba(20, 38, 61, 0.12);
+      --shadow-sm: 0 12px 24px rgba(20, 38, 61, 0.08);
+      --radius-xl: 1.35rem;
+      --radius-lg: 1rem;
+      --radius-md: 0.85rem;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: "Plus Jakarta Sans", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(225, 233, 244, 0.75), transparent 24%),
+        linear-gradient(180deg, #f8fbff 0%, #eef3f9 100%);
+    }
+    button, input, textarea, select { font: inherit; }
+
+    .hidden { display: none !important; }
+
+    .auth-shell {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 1.25rem;
+    }
+
+    .auth-panel {
+      width: min(100%, 32rem);
+      padding: 1.4rem;
+      background: rgba(255, 255, 255, 0.94);
+      border: 1px solid rgba(199, 211, 226, 0.84);
+      border-radius: 1.8rem;
+      box-shadow: var(--shadow-lg);
+      backdrop-filter: blur(18px);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      min-height: 2rem;
+      padding: 0.35rem 0.75rem;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent-strong);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .brand-title, .page-title, .section-title, .panel-title {
+      margin: 0;
+      font-family: "Plus Jakarta Sans", sans-serif;
+      letter-spacing: -0.04em;
+      line-height: 1.02;
+    }
+
+    .brand-title {
+      margin-top: 1rem;
+      font-size: clamp(2rem, 5vw, 2.8rem);
+      font-weight: 800;
+    }
+
+    .page-title {
+      font-size: clamp(1.45rem, 3vw, 1.9rem);
+      font-weight: 800;
+    }
+
+    .auth-copy,
+    .section-copy,
+    .muted {
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .auth-grid, .grid, .visibility-grid {
+      display: grid;
+      gap: 0.85rem;
+    }
+
+    .auth-grid { margin-top: 1.2rem; }
+    .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .visibility-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+    .field {
+      display: grid;
+      gap: 0.42rem;
+    }
+
+    label {
+      font-size: 0.74rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      padding: 0.92rem 0.96rem;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(199, 211, 226, 0.95);
+      background: rgba(255, 255, 255, 0.96);
+      color: var(--ink);
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      border-color: rgba(138, 90, 54, 0.72);
+      box-shadow: 0 0 0 4px rgba(138, 90, 54, 0.12);
+    }
+
+    textarea { min-height: 7rem; resize: vertical; }
+
+    .actions {
+      display: flex;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-top: 1rem;
+    }
+
+    .primary-button,
+    .secondary-button,
+    .ghost-link,
+    .mini-button {
+      min-height: 2.8rem;
+      padding: 0.75rem 1rem;
+      border-radius: 999px;
+      border: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      text-decoration: none;
+      cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
+    }
+
+    .primary-button {
+      background: linear-gradient(135deg, #91613c, #714827);
+      color: #fffaf5;
+      box-shadow: 0 16px 26px rgba(113, 72, 39, 0.2);
+    }
+
+    .secondary-button,
+    .ghost-link,
+    .mini-button {
+      background: rgba(255, 255, 255, 0.94);
+      border: 1px solid rgba(199, 211, 226, 0.95);
+      color: var(--ink);
+    }
+
+    .mini-button {
+      min-height: 2.2rem;
+      padding-inline: 0.8rem;
+      font-size: 0.85rem;
+    }
+
+    .primary-button:hover,
+    .secondary-button:hover,
+    .ghost-link:hover,
+    .mini-button:hover {
+      transform: translateY(-1px);
+    }
+
+    .message { color: var(--muted); font-size: 0.92rem; }
+
+    .app-shell {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 18rem minmax(0, 1fr);
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      padding: 1.2rem;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.03), transparent 18%),
+        linear-gradient(180deg, var(--sidebar) 0%, #0e151d 100%);
+      color: #f3f7fb;
+      display: grid;
+      grid-template-rows: auto auto 1fr auto;
+      gap: 1rem;
+    }
+
+    .brand-block {
+      display: grid;
+      gap: 0.7rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .brand-mark {
+      width: 3rem;
+      height: 3rem;
+      border-radius: 0.95rem;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, #ecd8bb, #b67d47);
+      color: #28190f;
+      font-family: "Source Serif 4", serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      box-shadow: 0 16px 28px rgba(0, 0, 0, 0.22);
+    }
+
+    .sidebar-title {
+      margin: 0;
+      font-size: 1.42rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+    }
+
+    .sidebar-copy {
+      margin: 0;
+      color: rgba(243, 247, 251, 0.68);
+      line-height: 1.6;
+      font-size: 0.92rem;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 2rem;
+      padding: 0.38rem 0.75rem;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: rgba(243, 247, 251, 0.82);
+      font-size: 0.82rem;
+    }
+
+    .nav {
+      display: grid;
+      gap: 0.45rem;
+      align-content: start;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      min-height: 3rem;
+      padding: 0.82rem 0.95rem;
+      border: 0;
+      border-radius: 1rem;
+      background: transparent;
+      color: rgba(243, 247, 251, 0.74);
+      text-align: left;
+      cursor: pointer;
+      transition: transform 0.18s ease, background-color 0.18s ease, color 0.18s ease;
+    }
+
+    .nav-link:hover,
+    .nav-link.is-active {
+      background: rgba(255,255,255,0.08);
+      color: #ffffff;
+      transform: translateX(2px);
+    }
+
+    .nav-icon {
+      width: 1.9rem;
+      height: 1.9rem;
+      border-radius: 0.7rem;
+      display: grid;
+      place-items: center;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.07);
+      font-size: 0.88rem;
+    }
+
+    .nav-label {
+      display: grid;
+      gap: 0.14rem;
+    }
+
+    .nav-label strong { font-size: 0.92rem; }
+    .nav-label span {
+      font-size: 0.78rem;
+      color: rgba(243, 247, 251, 0.55);
+    }
+
+    .sidebar-footer {
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .content-shell {
+      width: min(100%, 65rem);
+      margin: 0 auto;
+      padding: 1.2rem;
+      display: grid;
+      gap: 1rem;
+      align-content: start;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .topbar-copy {
+      display: grid;
+      gap: 0.45rem;
+    }
+
+    .topbar-copy p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 0.95rem;
+    }
+
+    .topbar-actions {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .surface,
+    .metric-card {
+      background: var(--panel);
+      border: 1px solid rgba(199, 211, 226, 0.8);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-sm);
+      backdrop-filter: blur(18px);
+    }
+
+    .surface { padding: 1.1rem; }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .section-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+    }
+
+    .section-copy {
+      margin: 0.35rem 0 0;
+      max-width: 44rem;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0.9rem;
+    }
+
+    .metric-card {
+      padding: 1rem;
+      display: grid;
+      gap: 0.45rem;
+    }
+
+    .metric-label {
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .metric-value {
+      font-family: "Plus Jakarta Sans", sans-serif;
+      font-size: clamp(1.8rem, 4vw, 2.35rem);
+      line-height: 0.95;
+      letter-spacing: -0.05em;
+      font-weight: 800;
+    }
+
+    .metric-note {
+      color: var(--muted);
+      font-size: 0.86rem;
+      line-height: 1.5;
+    }
+
+    .overview-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 1rem;
+    }
+
+    .helper-list {
+      display: grid;
+      gap: 0.75rem;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .helper-list li {
+      padding: 0.9rem;
+      border-radius: 1rem;
+      background: var(--panel-soft);
+      border: 1px solid rgba(199, 211, 226, 0.75);
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .helper-list strong {
+      display: block;
+      margin-bottom: 0.15rem;
+      color: var(--ink);
+    }
+
+    .overview-rsvp-list {
+      display: grid;
+      gap: 0.8rem;
+    }
+
+    .overview-rsvp-item {
+      display: grid;
+      gap: 0.45rem;
+      padding: 0.95rem;
+      border-radius: 1rem;
+      background: var(--panel-soft);
+      border: 1px solid rgba(199, 211, 226, 0.75);
+    }
+
+    .overview-rsvp-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .overview-rsvp-name {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--ink);
+    }
+
+    .overview-rsvp-meta {
+      display: flex;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.5;
+    }
+
+    .overview-rsvp-message {
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.6;
+    }
+
+    .content-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 1rem;
+      align-items: start;
+    }
+
+    .stack {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .content-group {
+      display: grid;
+      gap: 0.95rem;
+      padding: 1.05rem;
+      border-radius: 1.2rem;
+      background: linear-gradient(180deg, rgba(249, 251, 254, 0.96), rgba(243, 247, 252, 0.92));
+      border: 1px solid rgba(199, 211, 226, 0.8);
+    }
+
+    .group-heading {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      padding-bottom: 0.2rem;
+      border-bottom: 1px solid rgba(199, 211, 226, 0.65);
+    }
+
+    .group-title {
+      margin: 0;
+      font-size: 1.02rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--ink);
+    }
+
+    .group-copy {
+      margin: 0.22rem 0 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      max-width: 36rem;
+    }
+
+    .content-group + .content-group {
+      margin-top: 0.15rem;
+    }
+
+    .mini-panel {
+      padding: 1rem;
+      border-radius: 1rem;
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(199, 211, 226, 0.7);
+    }
+
+    .content-group .mini-panel + .mini-panel {
+      margin-top: 0.05rem;
+    }
+
+    .panel-title {
+      font-size: 1rem;
+      font-weight: 800;
+      margin-bottom: 0.1rem;
+    }
+
+    .panel-topbar {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.8rem;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      margin-bottom: 0.85rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid rgba(219, 228, 239, 0.85);
+    }
+
+    .panel-copy {
+      margin: 0.25rem 0 0;
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.55;
+      max-width: 36rem;
+    }
+
+    .panel-utility {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      flex-wrap: wrap;
+    }
+
+    .panel-utility input[type="file"] {
+      max-width: 100%;
+    }
+
+    .inline-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      min-height: 2.35rem;
+      padding: 0.35rem 0.45rem 0.35rem 0.8rem;
+      border-radius: 999px;
+      border: 1px solid rgba(199, 211, 226, 0.96);
+      background: rgba(255, 255, 255, 0.92);
+      color: var(--ink);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .inline-toggle .switch {
+      width: 2.8rem;
+      height: 1.65rem;
+    }
+
+    .inline-toggle .switch span::after {
+      width: 1.25rem;
+      height: 1.25rem;
+      top: 0.2rem;
+      left: 0.2rem;
+    }
+
+    .inline-toggle .switch input:checked + span::after {
+      transform: translateX(1.12rem);
+    }
+
+    .toolbar-note {
+      color: var(--muted);
+      font-size: 0.84rem;
+      line-height: 1.55;
+    }
+
+    .inline-actions {
+      display: flex;
+      gap: 0.65rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .upload-dropzone {
+      position: relative;
+      display: grid;
+      gap: 0.45rem;
+      place-items: center;
+      min-height: 9.5rem;
+      padding: 1.1rem;
+      border-radius: 1rem;
+      border: 1.5px dashed rgba(138, 90, 54, 0.32);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(246, 249, 253, 0.92));
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.18s ease, background-color 0.18s ease, transform 0.18s ease;
+    }
+
+    .upload-dropzone:hover,
+    .upload-dropzone.is-dragging {
+      border-color: rgba(138, 90, 54, 0.68);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(240, 246, 252, 0.98));
+      transform: translateY(-1px);
+    }
+
+    .upload-dropzone strong {
+      font-size: 0.98rem;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+    }
+
+    .upload-dropzone span {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.55;
+      max-width: 22rem;
+    }
+
+    .upload-dropzone input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .repeatable-list {
+      display: grid;
+      gap: 0.8rem;
+    }
+
+    #galleryFields {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      align-items: start;
+    }
+
+    .repeatable-item {
+      padding: 0.9rem;
+      border-radius: var(--radius-md);
+      background: rgba(255,255,255,0.88);
+      border: 1px solid rgba(199, 211, 226, 0.9);
+      display: grid;
+      gap: 0.7rem;
+    }
+
+    .repeatable-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .repeatable-header strong {
+      font-size: 0.92rem;
+    }
+
+    .asset-toolbar {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .asset-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.9rem;
+    }
+
+    .asset-card {
+      padding: 0.9rem;
+      border-radius: var(--radius-lg);
+      background: var(--panel-soft);
+      border: 1px solid rgba(199, 211, 226, 0.78);
+      display: grid;
+      gap: 0.75rem;
+    }
+
+    .asset-preview {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      border-radius: 1rem;
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(180deg, #eef3f8, #e0e8f2);
+      border: 1px solid rgba(199, 211, 226, 0.82);
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .asset-preview img,
+    .asset-preview video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .asset-meta {
+      display: grid;
+      gap: 0.25rem;
+    }
+
+    .asset-meta strong { font-size: 0.95rem; }
+    .asset-meta span {
+      color: var(--muted);
+      font-size: 0.85rem;
+      line-height: 1.5;
+      word-break: break-word;
+    }
+
+    .asset-actions {
+      display: flex;
+      gap: 0.55rem;
+      flex-wrap: wrap;
+    }
+
+    .toggle-list {
+      display: grid;
+      gap: 0.75rem;
+    }
+
+    .toggle-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      min-height: 3.2rem;
+      padding: 0.8rem 0.9rem;
+      border-radius: var(--radius-md);
+      background: rgba(255,255,255,0.88);
+      border: 1px solid rgba(199, 211, 226, 0.9);
+    }
+
+    .toggle-copy strong {
+      display: block;
+      font-size: 0.92rem;
+      margin-bottom: 0.15rem;
+    }
+
+    .toggle-copy span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.84rem;
+      line-height: 1.5;
+    }
+
+    .switch {
+      position: relative;
+      width: 3rem;
+      height: 1.8rem;
+      flex: 0 0 auto;
+    }
+
+    .switch input {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .switch span {
+      position: absolute;
+      inset: 0;
+      border-radius: 999px;
+      background: #c7d3e2;
+      transition: background-color 0.2s ease;
+    }
+
+    .switch span::after {
+      content: "";
+      position: absolute;
+      top: 0.18rem;
+      left: 0.2rem;
+      width: 1.4rem;
+      height: 1.4rem;
+      border-radius: 999px;
+      background: white;
+      box-shadow: 0 6px 12px rgba(18, 35, 56, 0.16);
+      transition: transform 0.2s ease;
+    }
+
+    .switch input:checked + span {
+      background: #8a5a36;
+    }
+
+    .switch input:checked + span::after {
+      transform: translateX(1.2rem);
+    }
+
+    .table-wrap {
+      overflow: auto;
+      border-radius: 1rem;
+      border: 1px solid rgba(199, 211, 226, 0.82);
+      background: rgba(255,255,255,0.76);
+    }
+
+    .table-toolbar {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.8rem;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 0.9rem;
+    }
+
+    .table-toolbar-actions {
+      display: flex;
+      gap: 0.7rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 46rem;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 0.9rem 0.85rem;
+      border-bottom: 1px solid rgba(199, 211, 226, 0.62);
+      vertical-align: top;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      background: rgba(255,255,255,0.97);
+      z-index: 1;
+      color: var(--muted);
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 800;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 1.85rem;
+      padding: 0.28rem 0.68rem;
+      border-radius: 999px;
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .tag.attending {
+      background: rgba(30, 108, 83, 0.12);
+      color: var(--success);
+    }
+
+    .tag.declined {
+      background: rgba(182, 77, 66, 0.12);
+      color: var(--danger);
+    }
+
+    .empty {
+      padding: 1rem;
+      color: var(--muted);
+    }
+
+    @media (max-width: 1080px) {
+      .app-shell { grid-template-columns: 1fr; }
+      .sidebar {
+        position: static;
+        height: auto;
+        grid-template-rows: auto auto auto auto;
+      }
+      .metrics, .overview-grid, .content-layout, .visibility-grid { grid-template-columns: 1fr; }
+      #galleryFields {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .asset-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .nav {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+      .nav-link {
+        min-height: 4.2rem;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .auth-shell {
+        padding: 0.9rem;
+      }
+
+      .auth-panel,
+      .surface,
+      .metric-card {
+        border-radius: 1.15rem;
+      }
+
+      .auth-panel,
+      .surface {
+        padding: 1rem;
+      }
+
+      .app-shell {
+        min-height: auto;
+      }
+
+      .sidebar {
+        padding: 0.9rem;
+        gap: 0.85rem;
+      }
+
+      .brand-block {
+        gap: 0.55rem;
+        padding-bottom: 0.85rem;
+      }
+
+      .brand-mark {
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 0.8rem;
+        font-size: 1rem;
+      }
+
+      .sidebar-title {
+        font-size: 1.25rem;
+      }
+
+      .sidebar-copy {
+        font-size: 0.84rem;
+      }
+
+      .content-shell {
+        padding: 0.9rem;
+        gap: 0.85rem;
+      }
+
+      .topbar,
+      .section-header,
+      .asset-toolbar,
+      .actions {
+        align-items: stretch;
+      }
+
+      .topbar-actions,
+      .asset-toolbar,
+      .actions {
+        width: 100%;
+      }
+
+      .topbar-actions > *,
+      .asset-toolbar > *,
+      .actions > * {
+        width: 100%;
+      }
+
+      .panel-utility,
+      .inline-actions {
+        width: 100%;
+      }
+
+      .panel-utility > *,
+      .inline-actions > * {
+        width: 100%;
+      }
+
+      .table-toolbar,
+      .table-toolbar-actions {
+        align-items: stretch;
+      }
+
+      .table-toolbar-actions > * {
+        width: 100%;
+      }
+
+      .grid,
+      .metrics,
+      .nav {
+        grid-template-columns: 1fr;
+      }
+
+      .panel-topbar,
+      .group-heading {
+        align-items: stretch;
+      }
+
+      .nav {
+        gap: 0.55rem;
+      }
+
+      .nav-link {
+        min-height: 3.65rem;
+        padding: 0.75rem 0.85rem;
+      }
+
+      .nav-label strong {
+        font-size: 0.88rem;
+      }
+
+      .nav-label span {
+        font-size: 0.74rem;
+      }
+
+      .page-title {
+        font-size: 1.55rem;
+      }
+
+      .section-title {
+        font-size: 1.15rem;
+      }
+
+      .panel-title {
+        font-size: 1rem;
+      }
+
+      .metric-value {
+        font-size: 1.8rem;
+      }
+
+      .mini-panel,
+      .repeatable-item {
+        padding: 0.85rem;
+      }
+
+      .repeatable-header {
+        align-items: flex-start;
+      }
+
+      .repeatable-header strong {
+        padding-top: 0.25rem;
+      }
+
+      .toggle-row {
+        align-items: flex-start;
+        padding: 0.85rem;
+      }
+
+      .table-wrap {
+        overflow-x: auto;
+      }
+
+      table {
+        min-width: 36rem;
+      }
+    }
+
+    @media (max-width: 520px) {
+      body {
+        font-size: 15px;
+      }
+
+      .auth-panel,
+      .surface {
+        padding: 0.9rem;
+      }
+
+      .eyebrow {
+        font-size: 0.66rem;
+        letter-spacing: 0.1em;
+      }
+
+      .brand-title {
+        font-size: 1.8rem;
+      }
+
+      .page-title {
+        font-size: 1.35rem;
+      }
+
+      .topbar-copy p,
+      .section-copy,
+      .muted,
+      .helper-list li {
+        font-size: 0.92rem;
+        line-height: 1.55;
+      }
+
+      input,
+      textarea,
+      select {
+        padding: 0.82rem 0.88rem;
+      }
+
+      .primary-button,
+      .secondary-button,
+      .ghost-link,
+      .mini-button {
+        min-height: 2.65rem;
+      }
+
+      .asset-grid {
+        grid-template-columns: 1fr;
+      }
+
+      #galleryFields {
+        grid-template-columns: 1fr;
+      }
+
+      .asset-preview {
+        aspect-ratio: 4 / 3;
+      }
+
+      table {
+        min-width: 32rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <section class="auth-shell" id="authShell">
+    <div class="auth-panel">
+      <span class="eyebrow">Admin Console</span>
+      <h1 class="brand-title">Run the invitation like a polished publishing dashboard.</h1>
+      <p class="auth-copy">Sign in to manage content, upload assets, control what appears on the live invitation, and monitor RSVP activity from one workspace.</p>
+      <div class="auth-grid">
+        <div class="field">
+          <label for="loginEmail">Email</label>
+          <input id="loginEmail" type="email" placeholder="admin@example.com" />
+        </div>
+        <div class="field">
+          <label for="loginPassword">Password</label>
+          <input id="loginPassword" type="password" placeholder="Your password" />
+        </div>
+      </div>
+      <div class="actions">
+        <button class="primary-button" id="loginButton" type="button">Sign In</button>
+        <span class="message" id="authMessage">Use a Supabase email/password user for admin access.</span>
+      </div>
+    </div>
+  </section>
+
+  <main class="app-shell hidden" id="appShell">
+    <aside class="sidebar">
+      <div class="brand-block">
+        <div class="brand-mark">VC</div>
+        <div>
+          <h1 class="sidebar-title">Velvet Console</h1>
+          <p class="sidebar-copy">Content operations, asset management, and RSVP tracking for your live invitation subdomain.</p>
+        </div>
+      </div>
+
+      <div class="status-pill" id="authStatus">Not signed in</div>
+
+      <nav class="nav" aria-label="Dashboard sections">
+        <button class="nav-link is-active" type="button" data-target="overviewSection">
+          <span class="nav-icon">◌</span>
+          <span class="nav-label"><strong>Overview</strong><span>Status and quick metrics</span></span>
+        </button>
+        <button class="nav-link" type="button" data-target="contentSection">
+          <span class="nav-icon">✦</span>
+          <span class="nav-label"><strong>Content</strong><span>Edit invitation details</span></span>
+        </button>
+        <button class="nav-link" type="button" data-target="assetsSection">
+          <span class="nav-icon">▣</span>
+          <span class="nav-label"><strong>Assets</strong><span>Upload images, video, music</span></span>
+        </button>
+        <button class="nav-link" type="button" data-target="rsvpSection">
+          <span class="nav-icon">↗</span>
+          <span class="nav-label"><strong>RSVPs</strong><span>Review guest responses</span></span>
+        </button>
+        <button class="nav-link" type="button" data-target="accountSection">
+          <span class="nav-icon">☰</span>
+          <span class="nav-label"><strong>Account</strong><span>Session and setup notes</span></span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button class="nav-link" id="logoutButton" type="button">
+          <span class="nav-icon">↩</span>
+          <span class="nav-label"><strong>Sign Out</strong><span>End this admin session</span></span>
+        </button>
+      </div>
+    </aside>
+
+    <div class="content-shell">
+      <section class="topbar">
+        <div class="topbar-copy">
+          <h1 class="page-title" id="topbarTitle">Dashboard Overview</h1>
+          <p id="topbarDescription">Track response health, review activity, and move into the right workspace from a calmer, focused control surface.</p>
+        </div>
+        <div class="topbar-actions">
+          <a class="ghost-link" href="./index.html" target="_blank" rel="noreferrer">Open Live Invite</a>
+          <button class="secondary-button" id="refreshDashboardButton" type="button">Refresh Data</button>
+        </div>
+      </section>
+
+      <section id="overviewSection">
+        <div class="metrics">
+          <article class="metric-card">
+            <span class="metric-label">Total Responses</span>
+            <strong class="metric-value" id="totalResponses">0</strong>
+            <span class="metric-note">All RSVP rows received so far.</span>
+          </article>
+          <article class="metric-card">
+            <span class="metric-label">Attending</span>
+            <strong class="metric-value" id="attendingCount">0</strong>
+            <span class="metric-note">Confirmed guests marked as attending.</span>
+          </article>
+          <article class="metric-card">
+            <span class="metric-label">Declined</span>
+            <strong class="metric-value" id="declinedCount">0</strong>
+            <span class="metric-note">Guests who cannot attend.</span>
+          </article>
+          <article class="metric-card">
+            <span class="metric-label">Last Content Save</span>
+            <strong class="metric-value" id="lastUpdatedValue">-</strong>
+            <span class="metric-note">Latest successful content update timestamp.</span>
+          </article>
+        </div>
+
+        <div style="margin-top:1rem;">
+          <article class="surface">
+            <div class="section-header">
+              <div>
+                <h2 class="section-title">Latest RSVPs</h2>
+                <p class="section-copy">A quick snapshot of the most recent guest responses, so the overview page stays action-oriented.</p>
+              </div>
+            </div>
+            <div class="overview-rsvp-list" id="overviewRsvpList">
+              <div class="empty">No RSVP submissions yet.</div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="surface hidden" id="accountSection">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">Account & Setup</h2>
+            <p class="section-copy">Use this dashboard on the invitation subdomain or move it later to a dedicated admin subdomain.</p>
+          </div>
+        </div>
+        <ul class="helper-list">
+          <li><strong>Authentication</strong> Sign in with a Supabase email/password user.</li>
+          <li><strong>Storage</strong> Media uploads use the public `invitation-assets` bucket.</li>
+          <li><strong>Frontend</strong> The invitation still falls back to current hardcoded content until Supabase data is available.</li>
+        </ul>
+      </section>
+
+      <section class="surface hidden" id="contentSection">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">Invitation Content</h2>
+            <p class="section-copy">The content workspace is organized by function now: essentials, story media, and event details. Visibility controls sit inside the exact section they affect.</p>
+          </div>
+        </div>
+
+        <form id="settingsForm">
+          <div class="content-layout">
+              <section class="content-group">
+                <div class="group-heading">
+                  <div>
+                    <h3 class="group-title">Essentials</h3>
+                    <p class="group-copy">Core invitation identity, timing, and audio setup.</p>
+                  </div>
+                </div>
+
+                <section class="mini-panel">
+                  <div class="panel-topbar">
+                    <div>
+                      <h3 class="panel-title">Hero</h3>
+                      <p class="panel-copy">Main names, date line, venue line, and reveal timing.</p>
+                    </div>
+                  </div>
+                  <div class="grid">
+                    <div class="field"><label for="coupleNames">Couple Names</label><input id="coupleNames" name="couple_names" /></div>
+                    <div class="field"><label for="weddingDatetime">Wedding Datetime</label><input id="weddingDatetime" name="wedding_datetime" type="datetime-local" /></div>
+                    <div class="field"><label for="heroDateLineInput">Hero Date Line</label><input id="heroDateLineInput" name="hero_date_line" /></div>
+                    <div class="field"><label for="heroVenueLineInput">Hero Venue Line</label><input id="heroVenueLineInput" name="hero_venue_line" /></div>
+                  </div>
+                </section>
+
+                <section class="mini-panel">
+                  <div class="panel-topbar">
+                    <div>
+                      <h3 class="panel-title">Music</h3>
+                      <p class="panel-copy">Choose the invitation soundtrack and decide whether the music toggle appears on the frontend.</p>
+                    </div>
+                    <div class="panel-utility">
+                      <label class="inline-toggle">
+                        Show Music
+                        <span class="switch">
+                          <input id="musicVisibleToggle" type="checkbox" />
+                          <span></span>
+                        </span>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label for="backgroundMusicUrlInput">Background Music URL</label>
+                    <input id="backgroundMusicUrlInput" name="background_music_url" placeholder="Public MP3 or audio URL" />
+                  </div>
+                  <div class="actions">
+                    <input id="musicUploadInput" type="file" accept="audio/*" />
+                    <button class="secondary-button" id="uploadMusicButton" type="button">Upload Music</button>
+                    <span class="message" id="musicUploadMessage"></span>
+                  </div>
+                </section>
+              </section>
+
+              <section class="content-group">
+                <div class="group-heading">
+                  <div>
+                    <h3 class="group-title">Story & Gallery</h3>
+                    <p class="group-copy">Narrative copy and gallery media that shape the romantic section after the hero.</p>
+                  </div>
+                </div>
+
+                <section class="mini-panel">
+                  <div class="panel-topbar">
+                    <div>
+                      <h3 class="panel-title">Story Copy</h3>
+                      <p class="panel-copy">Headline, supporting paragraphs, quote, and section visibility.</p>
+                    </div>
+                    <div class="panel-utility">
+                      <label class="inline-toggle">
+                        Show Story
+                        <span class="switch">
+                          <input id="storyVisibleToggle" type="checkbox" />
+                          <span></span>
+                        </span>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="grid">
+                    <div class="field"><label for="storyKickerInput">Story Kicker</label><input id="storyKickerInput" name="story_kicker" /></div>
+                    <div class="field"><label for="storyTitleInput">Story Title</label><input id="storyTitleInput" name="story_title" /></div>
+                  </div>
+                  <div class="stack" style="margin-top:0.85rem;">
+                    <div class="field"><label for="storyParagraphOneInput">Story Paragraph One</label><textarea id="storyParagraphOneInput" name="story_paragraph_one"></textarea></div>
+                    <div class="field"><label for="storyParagraphTwoInput">Story Paragraph Two</label><textarea id="storyParagraphTwoInput" name="story_paragraph_two"></textarea></div>
+                    <div class="field"><label for="storyQuoteInput">Story Quote</label><textarea id="storyQuoteInput" name="story_quote"></textarea></div>
+                  </div>
+                </section>
+
+                <section class="mini-panel">
+                  <div class="panel-topbar">
+                    <div>
+                      <h3 class="panel-title">Gallery</h3>
+                      <p class="panel-copy">Upload directly here or add image URLs manually. Photos can be reordered later if needed.</p>
+                    </div>
+                    <div class="panel-utility">
+                      <label class="inline-toggle">
+                        Show Gallery
+                        <span class="switch">
+                          <input id="galleryVisibleToggle" type="checkbox" />
+                          <span></span>
+                        </span>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="inline-actions" style="margin:0.2rem 0 0.25rem;">
+                    <button class="secondary-button" id="addGalleryItemButton" type="button">Add Manual Photo Row</button>
+                  </div>
+                  <div class="repeatable-list" id="galleryFields"></div>
+                </section>
+              </section>
+
+              <section class="content-group">
+                <div class="group-heading">
+                  <div>
+                    <h3 class="group-title">Event Experience</h3>
+                    <p class="group-copy">Venue, schedule, dress guidance, and reply controls for the live invitation.</p>
+                  </div>
+                </div>
+
+                <section class="mini-panel">
+                  <div class="panel-topbar">
+                    <div>
+                      <h3 class="panel-title">Venue</h3>
+                      <p class="panel-copy">Location details and map links for the venue card.</p>
+                    </div>
+                    <div class="panel-utility">
+                      <label class="inline-toggle">
+                        Show Venue
+                        <span class="switch">
+                          <input id="venueVisibleToggle" type="checkbox" />
+                          <span></span>
+                        </span>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="stack">
+                    <div class="field"><label for="venueNameInput">Venue Name</label><input id="venueNameInput" name="venue_name" /></div>
+                    <div class="field"><label for="venueAddressInput">Venue Address</label><input id="venueAddressInput" name="venue_address" /></div>
+                    <div class="field"><label for="mapEmbedUrl">Map Embed URL</label><input id="mapEmbedUrl" name="map_embed_url" /></div>
+                    <div class="field"><label for="mapLinkUrl">Map Link URL</label><input id="mapLinkUrl" name="map_link_url" /></div>
+                  </div>
+                </section>
+
+                <section class="mini-panel">
+                  <div class="panel-topbar">
+                    <div>
+                      <h3 class="panel-title">Event Timeline</h3>
+                      <p class="panel-copy">Add, remove, and refine each part of the celebration flow.</p>
+                    </div>
+                    <div class="panel-utility">
+                      <label class="inline-toggle">
+                        Show Timeline
+                        <span class="switch">
+                          <input id="timelineVisibleToggle" type="checkbox" />
+                          <span></span>
+                        </span>
+                      </label>
+                      <button class="secondary-button" id="addTimelineItemButton" type="button">Add Timeline Item</button>
+                    </div>
+                  </div>
+                  <div class="repeatable-list" id="timelineFields"></div>
+                </section>
+
+                <section class="mini-panel">
+                  <div class="panel-topbar">
+                    <div>
+                      <h3 class="panel-title">Dress Code</h3>
+                      <p class="panel-copy">Manage the dress code copy and color options shown to guests.</p>
+                    </div>
+                    <div class="panel-utility">
+                      <label class="inline-toggle">
+                        Show Dress Code
+                        <span class="switch">
+                          <input id="dressCodeVisibleToggle" type="checkbox" />
+                          <span></span>
+                        </span>
+                      </label>
+                      <button class="secondary-button" id="addDressColorButton" type="button">Add Color</button>
+                    </div>
+                  </div>
+                  <div class="stack">
+                    <div class="field"><label for="dressCodeTitleInput">Dress Code Title</label><input id="dressCodeTitleInput" name="dress_code_title" /></div>
+                    <div class="field"><label for="dressCodeTextInput">Dress Code Text</label><input id="dressCodeTextInput" name="dress_code_text" /></div>
+                    <div class="repeatable-list" id="paletteFields"></div>
+                  </div>
+                </section>
+
+                <section class="mini-panel">
+                  <div class="panel-topbar">
+                    <div>
+                      <h3 class="panel-title">RSVP Section</h3>
+                      <p class="panel-copy">Control whether guests can see and submit the RSVP form on the live invite.</p>
+                    </div>
+                    <div class="panel-utility">
+                      <label class="inline-toggle">
+                        Show RSVP
+                        <span class="switch">
+                          <input id="rsvpVisibleToggle" type="checkbox" />
+                          <span></span>
+                        </span>
+                      </label>
+                    </div>
+                  </div>
+                  <p class="toolbar-note">The form structure stays on the frontend, but this toggle controls whether the section appears publicly.</p>
+                </section>
+              </section>
+          </div>
+
+          <div class="actions">
+            <button class="primary-button" type="submit">Save Changes</button>
+            <span class="message" id="saveMessage"></span>
+          </div>
+        </form>
+      </section>
+
+      <section class="surface hidden" id="assetsSection">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">Asset Library</h2>
+            <p class="section-copy">Upload image, video, and music files to Supabase Storage. Copy their public URLs or assign audio directly as the invitation background music.</p>
+          </div>
+        </div>
+
+        <div class="asset-toolbar">
+          <input id="assetUploadInput" type="file" multiple accept="image/*,video/*,audio/*" />
+          <button class="primary-button" id="uploadAssetsButton" type="button">Upload Selected Files</button>
+          <button class="secondary-button" id="refreshAssetsButton" type="button">Refresh Library</button>
+          <span class="message" id="assetMessage"></span>
+        </div>
+
+        <div class="asset-grid" id="assetLibraryGrid">
+          <div class="empty">No assets loaded yet.</div>
+        </div>
+      </section>
+
+      <section class="surface hidden" id="rsvpSection">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">RSVP Tracking</h2>
+            <p class="section-copy">Review incoming guest responses, attendance status, and message notes in a single operating table.</p>
+          </div>
+        </div>
+
+        <div class="table-toolbar">
+          <div>
+            <p class="toolbar-note" id="rsvpSummary">All responses are shown below.</p>
+          </div>
+          <div class="table-toolbar-actions">
+            <select id="rsvpFilter" aria-label="Filter RSVP status">
+              <option value="all">All responses</option>
+              <option value="attending">Attending only</option>
+              <option value="declined">Not attending only</option>
+            </select>
+            <button class="secondary-button" id="exportRsvpsButton" type="button">Export CSV</button>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Status</th>
+                <th>Guests</th>
+                <th>Message</th>
+                <th>Submitted</th>
+              </tr>
+            </thead>
+            <tbody id="rsvpTableBody">
+              <tr><td colspan="6" class="empty">No RSVP submissions yet.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./supabase-config.js"></script>
+  <script src="./admin.js"></script>
+</body>
+</html>

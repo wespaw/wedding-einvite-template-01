@@ -1,61 +1,121 @@
 # Wedding Invitation Template
 
-The live invitation currently runs from:
+This project is now set up for a `Cloudflare Pages + Supabase` workflow.
 
-- [`index.html`](./index.html)
+Public pages:
 
-## Quick Start
+- [`index.html`](./index.html): invitation frontend
+- [`admin.html`](./admin.html): admin dashboard for updating content and tracking RSVPs
 
-1. Open [`index.html`](./index.html)
-2. Replace the sample names, story, venue, date, images, and RSVP link
-3. Save the file
-4. Publish the site
+Backend files:
 
-## What To Edit
+- [`supabase-schema.sql`](./supabase-schema.sql): database schema and policies
+- [`supabase-config.js`](./supabase-config.js): frontend/admin connection config
+- [`admin.js`](./admin.js): admin page logic
 
-Inside [`index.html`](./index.html) you can change:
+## Recommended Hosting
 
-- Browser title
-- Countdown date/time
-- Bride and groom names
-- Hero text
-- Intro section copy
-- Portrait image and caption
-- Story section
-- Gallery images
-- Event timeline
-- Venue text and map links
-- Dress code text and color swatches
-- RSVP hosted form endpoint
+- Host the invitation on a subdomain like `invite.yourdomain.com` with Cloudflare Pages
+- Keep the admin on the same subdomain at `/admin.html`, or move it later to `admin.yourdomain.com`
+- Use Supabase for:
+  - editable invitation content
+  - RSVP storage
+  - admin authentication
 
-## What Not To Edit
+## Setup Steps
 
-If you only want to change the current invitation content, you usually do not need to edit:
+1. Create a Supabase project
+2. Open the SQL editor in Supabase
+3. Run [`supabase-schema.sql`](./supabase-schema.sql)
+4. In Supabase, create an admin user with email/password auth
+5. The SQL also creates a public storage bucket called `invitation-assets`
+6. Open [`supabase-config.js`](./supabase-config.js)
+6. Replace:
+   - `YOUR_SUPABASE_URL`
+   - `YOUR_SUPABASE_ANON_KEY`
+7. Deploy the project to Cloudflare Pages
 
-- [`styles.css`](./styles.css)
-- [`script.js`](./script.js)
+## What The Backend Stores
 
-## RSVP Setup
+`site_settings`
 
-This template is designed for a hosted form service.
+- couple names
+- hero date line
+- hero venue line
+- wedding datetime
+- background music URL
+- story text
+- quote
+- venue name
+- venue address
+- map embed URL
+- map link URL
+- dress code title and text
+- dress code colors
+- gallery images
+- event timeline
+- section visibility settings
 
-Update the `<form action="...">` inside [`index.html`](./index.html) with your real endpoint from:
+`rsvps`
 
-- Formspree
-- Basin
-- Web3Forms
+- guest name
+- email
+- attendance status
+- guest count
+- message
+- submission timestamp
 
-## Image Tips
+## How To Edit Content
 
-For the easiest setup:
+1. Open [`admin.html`](./admin.html)
+2. Log in with your Supabase admin email/password
+3. Use the `Content` section to:
+   - update hero, story, venue, and music fields
+   - directly upload gallery images into the content editor
+   - add or remove gallery photos
+   - add or remove event timeline items
+   - add or remove dress code colors
+   - show or hide sections on the frontend
+4. Save changes
+5. Refresh the public invitation page
 
-- Use direct image URLs in [`index.html`](./index.html), or
-- Upload your images and replace the sample URLs
+## Asset Library
 
-## Backups
+The admin dashboard now includes an `Assets` section.
 
-Backup copies of the original files were created before this refactor:
+Use it to:
 
-- [`index.backup-20260318-1.html`](./index.backup-20260318-1.html)
-- [`script.backup-20260318-1.js`](./script.backup-20260318-1.js)
-- [`styles.backup-20260318-1.css`](./styles.backup-20260318-1.css)
+- upload images
+- upload videos
+- upload music/audio
+- copy public asset URLs
+- set an uploaded audio file as the background music
+- delete unused assets
+
+The `Content` section also has its own direct gallery image upload shortcut, which uploads selected images and appends them to the gallery list automatically.
+
+Uploaded files go into the public Supabase Storage bucket:
+
+- `invitation-assets`
+
+This makes them easy to use directly from your Cloudflare-hosted invitation subdomain.
+
+## How RSVP Works
+
+- The public form in [`index.html`](./index.html) now submits directly to Supabase
+- Responses appear in the RSVP table inside [`admin.html`](./admin.html)
+- Public visitors can submit RSVPs
+- Only authenticated admin users can read RSVP data in the dashboard
+
+## Notes
+
+- If Supabase is not configured yet, the invitation still shows the current hardcoded content
+- Once configured, the page will load live content from Supabase
+- The public invitation uses the anon key, which is normal for Supabase frontend apps
+- If uploads fail with `bucket not found`, create a public Storage bucket named `invitation-assets` in Supabase manually, then rerun [`supabase-schema.sql`](./supabase-schema.sql)
+
+## Local Files Not Required For Setup
+
+- [`content.js`](./content.js) is currently not used
+- [`styles.css`](./styles.css) is not the main live invitation stylesheet
+- backup files in [`bk`](./bk) are for reference only
