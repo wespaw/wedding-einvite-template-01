@@ -6,6 +6,14 @@
   const appShell = document.getElementById("appShell");
   const authStatus = document.getElementById("authStatus");
   const authMessage = document.getElementById("authMessage");
+  const authTitle = document.getElementById("authTitle");
+  const authCopy = document.getElementById("authCopy");
+  const loginFields = document.getElementById("loginFields");
+  const recoveryFields = document.getElementById("recoveryFields");
+  const menuButton = document.getElementById("menuButton");
+  const mobileMenuButton = document.getElementById("mobileMenuButton");
+  const sidebarCloseButton = document.getElementById("sidebarCloseButton");
+  const sidebarOverlay = document.getElementById("sidebarOverlay");
   const saveMessage = document.getElementById("saveMessage");
   const settingsForm = document.getElementById("settingsForm");
   const galleryFields = document.getElementById("galleryFields");
@@ -69,6 +77,7 @@
 
   let currentSettings = null;
   let allRsvps = [];
+  let authMode = "login";
 
   const pageMeta = {
     overviewSection: {
@@ -126,6 +135,66 @@
     }
   }
 
+  function isMobileSidebarMode() {
+    return window.matchMedia("(max-width: 1080px)").matches;
+  }
+
+  function setSidebarOpen(isOpen) {
+    document.body.classList.toggle("sidebar-open", isOpen && isMobileSidebarMode());
+    if (sidebarOverlay) {
+      sidebarOverlay.classList.toggle("is-open", isOpen && isMobileSidebarMode());
+    }
+    [menuButton, mobileMenuButton].forEach((button) => {
+      if (!button) {
+        return;
+      }
+      button.setAttribute("aria-expanded", isOpen && isMobileSidebarMode() ? "true" : "false");
+      button.setAttribute("aria-label", isOpen && isMobileSidebarMode() ? "Close navigation menu" : "Open navigation menu");
+    });
+  }
+
+  function getRecoveryParams() {
+    const hash = window.location.hash.startsWith("#") ? window.location.hash.slice(1) : "";
+    const params = new URLSearchParams(hash);
+    return {
+      type: params.get("type"),
+      hasAccessToken: Boolean(params.get("access_token")),
+      hasRefreshToken: Boolean(params.get("refresh_token"))
+    };
+  }
+
+  function clearRecoveryHash() {
+    if (!window.location.hash) {
+      return;
+    }
+
+    history.replaceState(null, "", `${window.location.pathname}${window.location.search}`);
+  }
+
+  function setAuthMode(mode) {
+    authMode = mode === "recovery" ? "recovery" : "login";
+    const isRecovery = authMode === "recovery";
+
+    if (authTitle) {
+      authTitle.textContent = isRecovery
+        ? "Choose a new password for your admin dashboard."
+        : "Run the invitation like a polished publishing dashboard.";
+    }
+
+    if (authCopy) {
+      authCopy.textContent = isRecovery
+        ? "This page opened from your Supabase recovery email. Set a new password below, then continue into the dashboard."
+        : "Sign in to manage content, upload assets, control what appears on the live invitation, and monitor RSVP activity from one workspace.";
+    }
+
+    loginFields?.classList.toggle("hidden", isRecovery);
+    recoveryFields?.classList.toggle("hidden", !isRecovery);
+    byId("loginButton")?.classList.toggle("hidden", isRecovery);
+    byId("sendResetButton")?.classList.toggle("hidden", isRecovery);
+    byId("updatePasswordButton")?.classList.toggle("hidden", !isRecovery);
+    byId("backToLoginButton")?.classList.toggle("hidden", !isRecovery);
+  }
+
   function formatDateTime(value) {
     if (!value) return "-";
     const date = new Date(value);
@@ -145,6 +214,22 @@
     return new Date(value).toISOString();
   }
 
+  function formatHeroDateLine(value) {
+    if (!value) return "";
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return "";
+
+    return new Intl.DateTimeFormat("en-GB", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true
+    }).format(date).replace(",", " •");
+  }
+
   function setActiveSection(targetId) {
     navLinks.forEach((button) => {
       const isActive = button.dataset.target === targetId;
@@ -159,6 +244,10 @@
     if (meta) {
       if (topbarTitle) topbarTitle.textContent = meta.title;
       if (topbarDescription) topbarDescription.textContent = meta.description;
+    }
+
+    if (isMobileSidebarMode()) {
+      setSidebarOpen(false);
     }
   }
 
@@ -346,11 +435,6 @@
   }
 
   function renderGalleryFields() {
-    if (!state.gallery.length) {
-      galleryFields.innerHTML = '<div class="empty">No gallery items yet. Upload images or add a manual row.</div>';
-      return;
-    }
-
     galleryFields.innerHTML = state.gallery.map((item, index) => `
       <div class="repeatable-item">
         <div class="repeatable-header">
@@ -363,16 +447,14 @@
             ? `<div class="asset-preview"><img src="${escapeHtml(item.image_url)}" alt="${escapeHtml(item.alt || `Gallery photo ${index + 1}`)}" /></div><strong>Drop or click to replace photo</strong>`
             : `<strong>Drop photo here</strong><span>or click to upload an image for this gallery card.</span>`}
         </label>
-        <div class="field">
-          <label>Image URL</label>
-          <input type="url" data-array="gallery" data-index="${index}" data-key="image_url" value="${escapeHtml(item.image_url || "")}" placeholder="https://..." />
-        </div>
-        <div class="field">
-          <label>Alt Text</label>
-          <input data-array="gallery" data-index="${index}" data-key="alt" value="${escapeHtml(item.alt || "")}" placeholder="Describe the photo" />
-        </div>
       </div>
-    `).join("");
+    `).join("") + `
+      <label class="upload-dropzone gallery-add-card" id="galleryAddCard">
+        <input type="file" accept="image/*" data-gallery-add="true" />
+        <strong>Add Photo</strong>
+        <span>Drag a new image here or click to append another gallery card.</span>
+      </label>
+    `;
   }
 
   function renderTimelineFields() {
@@ -417,15 +499,13 @@
           <strong>Dress Code Color ${index + 1}</strong>
           <button class="mini-button" type="button" data-remove-array="dress_code_palette" data-index="${index}">Remove</button>
         </div>
-        <div class="grid">
-          <div class="field">
-            <label>Label</label>
-            <input data-array="dress_code_palette" data-index="${index}" data-key="label" value="${escapeHtml(item.label || "")}" placeholder="Velvet Red" />
-          </div>
-          <div class="field">
-            <label>Color</label>
-            <input type="color" data-array="dress_code_palette" data-index="${index}" data-key="color" value="${escapeHtml(item.color || "#d1ab70")}" />
-          </div>
+        <div class="field">
+          <label>Label</label>
+          <input data-array="dress_code_palette" data-index="${index}" data-key="label" value="${escapeHtml(item.label || "")}" placeholder="Velvet Red" />
+        </div>
+        <div class="field">
+          <label>Color</label>
+          <input type="color" data-array="dress_code_palette" data-index="${index}" data-key="color" value="${escapeHtml(item.color || "#d1ab70")}" />
         </div>
       </div>
     `).join("");
@@ -462,7 +542,6 @@
     }
 
     byId("coupleNames").value = data.couple_names || "";
-    byId("heroDateLineInput").value = data.hero_date_line || "";
     byId("heroVenueLineInput").value = data.hero_venue_line || "";
     byId("weddingDatetime").value = normalizeDatetimeForInput(data.wedding_datetime);
     byId("backgroundMusicUrlInput").value = data.background_music_url || "";
@@ -475,6 +554,7 @@
     byId("venueAddressInput").value = data.venue_address || "";
     byId("mapEmbedUrl").value = data.map_embed_url || "";
     byId("mapLinkUrl").value = data.map_link_url || "";
+    byId("timelineTitleInput").value = data.timeline_title || "";
     byId("dressCodeTitleInput").value = data.dress_code_title || "";
     byId("dressCodeTextInput").value = data.dress_code_text || "";
 
@@ -658,7 +738,7 @@
     return {
       id: 1,
       couple_names: byId("coupleNames").value.trim(),
-      hero_date_line: byId("heroDateLineInput").value.trim(),
+      hero_date_line: formatHeroDateLine(byId("weddingDatetime").value),
       hero_venue_line: byId("heroVenueLineInput").value.trim(),
       wedding_datetime: denormalizeDatetime(byId("weddingDatetime").value),
       background_music_url: byId("backgroundMusicUrlInput").value.trim(),
@@ -671,6 +751,7 @@
       venue_address: byId("venueAddressInput").value.trim(),
       map_embed_url: byId("mapEmbedUrl").value.trim(),
       map_link_url: byId("mapLinkUrl").value.trim(),
+      timeline_title: byId("timelineTitleInput").value.trim(),
       dress_code_title: byId("dressCodeTitleInput").value.trim(),
       dress_code_text: byId("dressCodeTextInput").value.trim(),
       gallery: state.gallery.filter((item) => item.image_url && item.image_url.trim()),
@@ -726,13 +807,14 @@
   async function updateAuthUI() {
     const { data } = await supabaseClient.auth.getSession();
     const isLoggedIn = Boolean(data.session);
-    authShell.classList.toggle("hidden", isLoggedIn);
-    appShell.classList.toggle("hidden", !isLoggedIn);
+    const showRecovery = authMode === "recovery";
+    authShell.classList.toggle("hidden", isLoggedIn && !showRecovery);
+    appShell.classList.toggle("hidden", !isLoggedIn || showRecovery);
     if (authStatus) {
       authStatus.textContent = isLoggedIn ? data.session.user.email : "Not signed in";
     }
 
-    if (isLoggedIn) {
+    if (isLoggedIn && !showRecovery) {
       await refreshDashboardData();
       setActiveSection("overviewSection");
     }
@@ -748,19 +830,80 @@
     await updateAuthUI();
   }
 
+  async function sendResetLink() {
+    const email = byId("loginEmail").value.trim();
+    if (!email) {
+      setMessage(authMessage, "Enter your admin email first, then send the reset link.");
+      return;
+    }
+
+    setMessage(authMessage, "Sending reset link...");
+    const redirectTo = `${window.location.origin}${window.location.pathname}`;
+    const { error } = await supabaseClient.auth.resetPasswordForEmail(email, { redirectTo });
+    setMessage(
+      authMessage,
+      error
+        ? error.message
+        : `Reset link sent to ${email}. Open it and this page will switch into password recovery mode.`
+    );
+  }
+
+  async function updatePassword() {
+    const password = byId("recoveryPassword").value;
+    const confirmation = byId("recoveryPasswordConfirm").value;
+
+    if (!password || !confirmation) {
+      setMessage(authMessage, "Enter and confirm your new password first.");
+      return;
+    }
+
+    if (password.length < 6) {
+      setMessage(authMessage, "Use a password with at least 6 characters.");
+      return;
+    }
+
+    if (password !== confirmation) {
+      setMessage(authMessage, "The new password and confirmation do not match.");
+      return;
+    }
+
+    setMessage(authMessage, "Saving new password...");
+    const { error } = await supabaseClient.auth.updateUser({ password });
+    if (error) {
+      setMessage(authMessage, error.message || "Unable to save the new password.");
+      return;
+    }
+
+    byId("recoveryPassword").value = "";
+    byId("recoveryPasswordConfirm").value = "";
+    clearRecoveryHash();
+    setAuthMode("login");
+    setMessage(authMessage, "Password updated successfully. You can continue into the dashboard now.");
+    await updateAuthUI();
+  }
+
   async function logout() {
     await supabaseClient.auth.signOut();
+    setAuthMode("login");
+    clearRecoveryHash();
     setMessage(authMessage, "Signed out.");
     await updateAuthUI();
   }
 
   byId("loginButton").addEventListener("click", login);
+  byId("sendResetButton").addEventListener("click", sendResetLink);
+  byId("updatePasswordButton").addEventListener("click", updatePassword);
+  byId("backToLoginButton").addEventListener("click", () => {
+    setAuthMode("login");
+    clearRecoveryHash();
+    setMessage(authMessage, "Use your admin email and password to sign in.");
+    updateAuthUI();
+  });
   byId("logoutButton").addEventListener("click", logout);
   byId("refreshDashboardButton").addEventListener("click", refreshDashboardData);
   byId("uploadAssetsButton").addEventListener("click", uploadAssets);
   byId("uploadMusicButton").addEventListener("click", uploadMusic);
   byId("refreshAssetsButton").addEventListener("click", loadAssets);
-  byId("addGalleryItemButton").addEventListener("click", addGalleryItem);
   byId("addTimelineItemButton").addEventListener("click", addTimelineItem);
   byId("addDressColorButton").addEventListener("click", addDressColorItem);
   byId("exportRsvpsButton").addEventListener("click", exportRsvps);
@@ -774,6 +917,28 @@
 
   navLinks.forEach((button) => {
     button.addEventListener("click", () => setActiveSection(button.dataset.target));
+  });
+
+  menuButton?.addEventListener("click", () => {
+    setSidebarOpen(!document.body.classList.contains("sidebar-open"));
+  });
+
+  mobileMenuButton?.addEventListener("click", () => {
+    setSidebarOpen(!document.body.classList.contains("sidebar-open"));
+  });
+
+  sidebarOverlay?.addEventListener("click", () => {
+    setSidebarOpen(false);
+  });
+
+  sidebarCloseButton?.addEventListener("click", () => {
+    setSidebarOpen(false);
+  });
+
+  window.addEventListener("resize", () => {
+    if (!isMobileSidebarMode()) {
+      setSidebarOpen(false);
+    }
   });
 
   [galleryFields, timelineFields, paletteFields].forEach((container) => {
@@ -800,6 +965,18 @@
   });
 
   galleryFields.addEventListener("change", async (event) => {
+    const addInput = event.target.closest("[data-gallery-add]");
+    if (addInput) {
+      const files = Array.from(addInput.files || []).filter((file) => file.type.startsWith("image/"));
+      if (!files.length) {
+        return;
+      }
+
+      await uploadGalleryImages(files, state.gallery.length);
+      addInput.value = "";
+      return;
+    }
+
     const input = event.target.closest("[data-gallery-upload]");
     if (!input) {
       return;
@@ -898,9 +1075,20 @@
     }
   });
 
-  supabaseClient.auth.onAuthStateChange(() => {
+  supabaseClient.auth.onAuthStateChange((event) => {
+    if (event === "PASSWORD_RECOVERY") {
+      setAuthMode("recovery");
+      setMessage(authMessage, "Reset link verified. Choose your new password.");
+    }
     updateAuthUI();
   });
+
+  if (getRecoveryParams().type === "recovery") {
+    setAuthMode("recovery");
+    setMessage(authMessage, "Recovery link detected. Choose a new password below.");
+  } else {
+    setAuthMode("login");
+  }
 
   updateAuthUI();
 })();
