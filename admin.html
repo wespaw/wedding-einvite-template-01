@@ -40,6 +40,7 @@
       background:
         radial-gradient(circle at top left, rgba(225, 233, 244, 0.75), transparent 24%),
         linear-gradient(180deg, #f8fbff 0%, #eef3f9 100%);
+      overflow-x: hidden;
     }
     button, input, textarea, select { font: inherit; }
 
@@ -353,6 +354,7 @@
       display: grid;
       gap: 1rem;
       align-content: start;
+      min-width: 0;
     }
 
     .topbar {
@@ -528,6 +530,19 @@
 
     .surface { padding: 1.1rem; }
 
+    #overviewSection,
+    #contentSection,
+    #assetsSection,
+    #rsvpSection,
+    #accountSection,
+    .surface,
+    .mini-panel,
+    .content-group,
+    .repeatable-item,
+    .table-wrap {
+      min-width: 0;
+    }
+
     .content-surface {
       padding: 0;
       background: transparent;
@@ -695,6 +710,8 @@
     .group-heading-main {
       display: grid;
       gap: 0.35rem;
+      min-width: 0;
+      flex: 1 1 auto;
     }
 
     .group-index {
@@ -703,6 +720,10 @@
       justify-content: center;
       min-width: 2rem;
       min-height: 2rem;
+      width: 2rem;
+      height: 2rem;
+      flex: 0 0 2rem;
+      align-self: flex-start;
       border-radius: 0.7rem;
       background: rgba(244, 233, 219, 0.9);
       color: var(--accent-strong);
@@ -781,8 +802,11 @@
     .inline-toggle {
       display: inline-flex;
       align-items: center;
+      justify-content: space-between;
       gap: 0.55rem;
       min-height: 2.35rem;
+      min-width: 10.75rem;
+      max-width: 100%;
       padding: 0.35rem 0.45rem 0.35rem 0.8rem;
       border-radius: 999px;
       border: 1px solid rgba(199, 211, 226, 0.96);
@@ -795,8 +819,10 @@
     }
 
     .inline-toggle .switch {
+      display: inline-flex;
       width: 2.8rem;
       height: 1.65rem;
+      margin-left: auto;
     }
 
     .inline-toggle .switch span::after {
@@ -941,6 +967,40 @@
       margin-bottom: 1rem;
     }
 
+    .table-toolbar {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .table-toolbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: nowrap;
+      justify-content: flex-end;
+    }
+
+    .table-toolbar-actions select {
+      width: min(100%, 20rem);
+      min-width: 14rem;
+    }
+
+    #rsvpSection .table-toolbar-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 0.75rem;
+      flex-wrap: nowrap;
+    }
+
+    #rsvpSection .table-toolbar-actions > * {
+      width: auto;
+      flex: 0 0 auto;
+    }
+
     .asset-grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1072,26 +1132,14 @@
     }
 
     .table-wrap {
-      overflow: auto;
+      width: 100%;
+      max-width: 100%;
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
       border-radius: 1rem;
       border: 1px solid rgba(199, 211, 226, 0.82);
       background: rgba(255,255,255,0.76);
-    }
-
-    .table-toolbar {
-      display: flex;
-      justify-content: space-between;
-      gap: 0.8rem;
-      align-items: center;
-      flex-wrap: wrap;
-      margin-bottom: 0.9rem;
-    }
-
-    .table-toolbar-actions {
-      display: flex;
-      gap: 0.7rem;
-      flex-wrap: wrap;
-      align-items: center;
     }
 
     table {
@@ -1197,6 +1245,10 @@
       .nav-link {
         min-height: 4.2rem;
       }
+
+      .table-wrap {
+        border-radius: 1rem;
+      }
     }
 
     @media (max-width: 720px) {
@@ -1210,8 +1262,7 @@
         border-radius: 1.15rem;
       }
 
-      .auth-panel,
-      .surface {
+      .auth-panel {
         padding: 1rem;
       }
 
@@ -1252,7 +1303,9 @@
       .topbar,
       .section-header,
       .asset-toolbar,
-      .actions {
+      .actions,
+      .panel-utility,
+      .inline-actions {
         align-items: stretch;
       }
 
@@ -1271,43 +1324,53 @@
 
       .topbar-actions,
       .asset-toolbar,
-      .actions {
+      .actions,
+      .panel-utility,
+      .inline-actions {
         width: 100%;
+      }
+
+      .topbar-actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
       .topbar-actions > *,
       .asset-toolbar > *,
-      .actions > * {
+      .actions > *,
+      .inline-actions > * {
         width: 100%;
+      }
+
+      .panel-utility > * {
+        width: auto;
+      }
+
+      .panel-utility > .inline-toggle {
+        width: 100%;
+      }
+
+      .table-toolbar {
+        grid-template-columns: 1fr;
+        align-items: stretch;
+      }
+
+      #rsvpSection .table-toolbar-actions,
+      .table-toolbar-actions {
+        width: 100%;
+        flex-wrap: wrap;
+        margin-left: 0;
+        align-items: stretch;
       }
 
       .menu-button {
         margin-top: 0.05rem;
       }
 
-      .panel-utility,
-      .inline-actions {
-        width: 100%;
-      }
-
-      /* .panel-utility > *,
-      .inline-actions > * {
-        width: 100%;
-      } */
-
       .content-actions {
         position: static;
         width: 100%;
         align-items: stretch;
-      }
-
-      .table-toolbar,
-      .table-toolbar-actions {
-        align-items: stretch;
-      }
-
-      .table-toolbar-actions > * {
-        width: 100%;
       }
 
       .grid,
@@ -1318,7 +1381,7 @@
 
       .panel-topbar,
       .group-heading {
-        align-items: stretch;
+        align-items: flex-start;
       }
 
       .nav {
@@ -1364,6 +1427,29 @@
         padding: 1rem;
       }
 
+      .content-surface {
+        gap: 0.35rem;
+      }
+
+      .content-layout {
+        gap: 1rem;
+      }
+
+      .group-heading {
+        gap: 0.85rem;
+        padding-bottom: 0.85rem;
+        margin-bottom: 0.85rem;
+      }
+
+      .group-index {
+        width: 1.9rem;
+        height: 1.9rem;
+        min-width: 1.9rem;
+        min-height: 1.9rem;
+        flex-basis: 1.9rem;
+        font-size: 0.7rem;
+      }
+
       .repeatable-header {
         align-items: flex-start;
       }
@@ -1377,18 +1463,33 @@
         padding: 0.85rem;
       }
 
-      .table-wrap {
-        overflow-x: auto;
+      table {
+        min-width: 34rem;
       }
 
-      table {
-        min-width: 36rem;
+      th,
+      td {
+        padding: 0.8rem 0.75rem;
       }
     }
 
     @media (max-width: 520px) {
       body {
         font-size: 15px;
+      }
+
+      .topbar-actions {
+        grid-template-columns: 1fr;
+      }
+
+      #rsvpSection .table-toolbar-actions,
+      .table-toolbar-actions {
+        flex-wrap: wrap;
+      }
+
+      #rsvpSection .table-toolbar-actions > *,
+      .table-toolbar-actions > * {
+        width: 100%;
       }
 
       .sidebar {
@@ -1400,8 +1501,7 @@
         padding: 0.85rem 0.9rem;
       }
 
-      .auth-panel,
-      .surface {
+      .auth-panel{
         padding: 0.9rem;
       }
 
@@ -1456,7 +1556,20 @@
       }
 
       table {
-        min-width: 32rem;
+        min-width: 28rem;
+      }
+
+      th,
+      td {
+        padding: 0.75rem 0.65rem;
+      }
+
+      th {
+        font-size: 0.7rem;
+      }
+
+      td {
+        font-size: 0.92rem;
       }
     }
   </style>
